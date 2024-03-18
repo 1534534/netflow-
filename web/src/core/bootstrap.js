@@ -13,7 +13,7 @@ export default function Initializer () {
     state.admin_user_id = localStorage.getItem(ADMIN_USER_ID)
     state.admin_user_name = localStorage.getItem(ADMIN_USER_NAME)
     state.admin_user_token = localStorage.getItem(ADMIN_USER_TOKEN)
-    console.log('恢复store完毕==>', state)
+    // console.log('恢复store完毕==>', state)
   })
 
 }

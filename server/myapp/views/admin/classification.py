@@ -6,24 +6,17 @@ from rest_framework.decorators import api_view, authentication_classes
 from myapp.auth.authentication import AdminTokenAuthtication
 from myapp.handler import APIResponse
 from myapp.models import Classification
-from myapp.permission.permission import isDemoAdminUser
 from myapp.serializers import ClassificationSerializer
-from myapp.utils import dict_fetchall
-
-
 @api_view(['GET'])
 def list_api(request):
     if request.method == 'GET':
         classifications = Classification.objects.all().order_by('-create_time')
         serializer = ClassificationSerializer(classifications, many=True)
         return APIResponse(code=0, msg='查询成功', data=serializer.data)
-
-
 @api_view(['POST'])
 @authentication_classes([AdminTokenAuthtication])
 def create(request):
-    if isDemoAdminUser(request):
-        return APIResponse(code=1, msg='演示帐号无法操作')
+
 
     classification = Classification.objects.filter(title=request.data['title'])
     if len(classification) > 0:
@@ -40,8 +33,7 @@ def create(request):
 @api_view(['POST'])
 @authentication_classes([AdminTokenAuthtication])
 def update(request):
-    if isDemoAdminUser(request):
-        return APIResponse(code=1, msg='演示帐号无法操作')
+
 
     try:
         pk = request.GET.get('id', -1)
@@ -61,8 +53,7 @@ def update(request):
 @api_view(['POST'])
 @authentication_classes([AdminTokenAuthtication])
 def delete(request):
-    if isDemoAdminUser(request):
-        return APIResponse(code=1, msg='演示帐号无法操作')
+
 
     try:
         ids = request.GET.get('ids')

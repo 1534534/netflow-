@@ -1,17 +1,11 @@
 # Create your views here.
-import datetime
-
 from rest_framework.decorators import api_view, authentication_classes
-
 from myapp import utils
 from myapp.auth.authentication import AdminTokenAuthtication
 from myapp.handler import APIResponse
 from myapp.models import User
-from myapp.permission.permission import isDemoAdminUser
 from myapp.serializers import UserSerializer, LoginLogSerializer
 from myapp.utils import md5value
-
-
 def make_login_log(request):
     try:
         username = request.data['username']
@@ -33,8 +27,9 @@ def make_login_log(request):
 def admin_login(request):
     username = request.data['username']
     password = utils.md5value(request.data['password'])
+    print(username, password)
+    users = User.objects.filter(username=username, password=password, role__in=['1','2','3'])
 
-    users = User.objects.filter(username=username, password=password, role__in=['1', '3'])
     if len(users) > 0:
         user = users[0]
         data = {
@@ -74,10 +69,6 @@ def list_api(request):
 @api_view(['POST'])
 @authentication_classes([AdminTokenAuthtication])
 def create(request):
-    if isDemoAdminUser(request):
-        return APIResponse(code=1, msg='演示帐号无法操作')
-
-    print(request.data)
     if not request.data.get('username', None) or not request.data.get('password', None):
         return APIResponse(code=1, msg='用户名或密码不能为空')
     users = User.objects.filter(username=request.data['username'])
@@ -92,15 +83,13 @@ def create(request):
         return APIResponse(code=0, msg='创建成功', data=serializer.data)
     else:
         print(serializer.errors)
-
     return APIResponse(code=1, msg='创建失败')
 
 
 @api_view(['POST'])
 @authentication_classes([AdminTokenAuthtication])
 def update(request):
-    if isDemoAdminUser(request):
-        return APIResponse(code=1, msg='演示帐号无法操作')
+
 
     try:
         pk = request.GET.get('id', -1)
@@ -114,7 +103,7 @@ def update(request):
     if 'password' in data.keys():
         del data['password']
     serializer = UserSerializer(user, data=data)
-    print(serializer.is_valid())
+    print('serializer.is_valid()',serializer.is_valid())
     if serializer.is_valid():
         serializer.save()
         return APIResponse(code=0, msg='更新成功', data=serializer.data)
@@ -126,8 +115,7 @@ def update(request):
 @api_view(['POST'])
 @authentication_classes([AdminTokenAuthtication])
 def updatePwd(request):
-    if isDemoAdminUser(request):
-        return APIResponse(code=1, msg='演示帐号无法操作')
+
 
     try:
         pk = request.GET.get('id', -1)
@@ -163,8 +151,7 @@ def updatePwd(request):
 @api_view(['POST'])
 @authentication_classes([AdminTokenAuthtication])
 def delete(request):
-    if isDemoAdminUser(request):
-        return APIResponse(code=1, msg='演示帐号无法操作')
+
 
     try:
         ids = request.GET.get('ids')

@@ -7,9 +7,9 @@
 <script setup lang="ts">
 import { FormInstance, message, SelectProps } from 'ant-design-vue';
 import { createApi, listApi, updateApi, deleteApi } from '/@/api/thing';
-import {listApi as listClassificationApi} from '/@/api/classification'
-import {listApi as listTagApi} from '/@/api/tag'
-import {BASE_URL} from "/@/store/constants";
+import { listApi as listClassificationApi } from '/@/api/classification'
+import { listApi as listTagApi } from '/@/api/tag'
+import { BASE_URL } from "/@/store/constants";
 import { FileImageOutlined, VideoCameraOutlined } from '@ant-design/icons-vue';
 
 const columns = reactive([
@@ -146,18 +146,20 @@ const getDataList = () => {
   listApi({
     keyword: data.keyword,
   })
-      .then((res) => {
-        data.loading = false;
-        console.log(res);
-        res.data.forEach((item: any, index: any) => {
-          item.index = index + 1;
-        });
-        data.dataList = res.data;
-      })
-      .catch((err) => {
-        data.loading = false;
-        console.log(err);
+    .then((res) => {
+      data.loading = false;
+      console.log(res);
+      res.data.forEach((item: any, index: any) => {
+        item.index = index + 1;
       });
+      data.dataList = res.data;
+      console.log(data.dataList);
+
+    })
+    .catch((err) => {
+      data.loading = false;
+      console.log(err);
+    });
 }
 
 const getCDataList = () => {
@@ -165,7 +167,7 @@ const getCDataList = () => {
     modal.cData = res.data
   })
 }
-const getTagDataList = ()=> {
+const getTagDataList = () => {
   listTagApi({}).then(res => {
     res.data.forEach((item, index) => {
       item.index = index + 1
@@ -211,11 +213,11 @@ const handleEdit = (record: any) => {
     modal.form[key] = undefined;
   }
   for (const key in record) {
-    if(record[key]) {
+    if (record[key]) {
       modal.form[key] = record[key];
     }
   }
-  if(modal.form.cover) {
+  if (modal.form.cover) {
     modal.form.coverUrl = BASE_URL + modal.form.cover
     modal.form.cover = undefined
   }
@@ -224,12 +226,12 @@ const handleEdit = (record: any) => {
 const confirmDelete = (record: any) => {
   console.log('delete', record);
   deleteApi({ ids: record.id })
-      .then((res) => {
-        getDataList();
-      })
-      .catch((err) => {
-        message.error(err.msg || '操作失败');
-      });
+    .then((res) => {
+      getDataList();
+    })
+    .catch((err) => {
+      message.error(err.msg || '操作失败');
+    });
 };
 
 const handleBatchDelete = () => {
@@ -240,73 +242,73 @@ const handleBatchDelete = () => {
     return;
   }
   deleteApi({ ids: data.selectedRowKeys.join(',') })
-      .then((res) => {
-        message.success('删除成功');
-        data.selectedRowKeys = [];
-        getDataList();
-      })
-      .catch((err) => {
-        message.error(err.msg || '操作失败');
-      });
+    .then((res) => {
+      message.success('删除成功');
+      data.selectedRowKeys = [];
+      getDataList();
+    })
+    .catch((err) => {
+      message.error(err.msg || '操作失败');
+    });
 };
 
 const handleOk = () => {
   myform.value
-      ?.validate()
-      .then(() => {
-        const formData = new FormData();
-        if(modal.editFlag) {
-          formData.append('id', modal.form.id)
-        }
-        formData.append('xuehao', modal.form.xuehao || '')
-        formData.append('name', modal.form.name || '')
-        formData.append('sex', modal.form.sex || '')
-        formData.append('birthday', modal.form.birthday || '')
-        formData.append('minzu', modal.form.minzu || '')
-        formData.append('sfz', modal.form.sfz || '')
-        formData.append('remark', modal.form.remark || '')
-        if (modal.form.classification) {
-          formData.append('classification', modal.form.classification)
-        }
-        if (modal.form.imageFile) {
-          formData.append('cover', modal.form.imageFile)
-        }
-        if (modal.form.status) {
-          formData.append('status', modal.form.status)
-        }
-        if (modal.editFlag) {
-          submitting.value = true
-          updateApi({
-            id: modal.form.id
-          },formData)
-              .then((res) => {
-                submitting.value = false
-                hideModal();
-                getDataList();
-              })
-              .catch((err) => {
-                submitting.value = false
-                console.log(err);
-                message.error(err.msg || '操作失败');
-              });
-        } else {
-          submitting.value = true
-          createApi(formData)
-              .then((res) => {
-                submitting.value = false
-                hideModal();
-                getDataList();
-              })
-              .catch((err) => {
-                submitting.value = false
-                console.log(err);
-                message.error(err.msg || '操作失败');
-              });
-        }
-      })
-      .catch((err) => {
-        console.log('不能为空');
-      });
+    ?.validate()
+    .then(() => {
+      const formData = new FormData();
+      if (modal.editFlag) {
+        formData.append('id', modal.form.id)
+      }
+      formData.append('xuehao', modal.form.xuehao || '')
+      formData.append('name', modal.form.name || '')
+      formData.append('sex', modal.form.sex || '')
+      formData.append('birthday', modal.form.birthday || '')
+      formData.append('minzu', modal.form.minzu || '')
+      formData.append('sfz', modal.form.sfz || '')
+      formData.append('remark', modal.form.remark || '')
+      if (modal.form.classification) {
+        formData.append('classification', modal.form.classification)
+      }
+      if (modal.form.imageFile) {
+        formData.append('cover', modal.form.imageFile)
+      }
+      if (modal.form.status) {
+        formData.append('status', modal.form.status)
+      }
+      if (modal.editFlag) {
+        submitting.value = true
+        updateApi({
+          id: modal.form.id
+        }, formData)
+          .then((res) => {
+            submitting.value = false
+            hideModal();
+            getDataList();
+          })
+          .catch((err) => {
+            submitting.value = false
+            console.log(err);
+            message.error(err.msg || '操作失败');
+          });
+      } else {
+        submitting.value = true
+        createApi(formData)
+          .then((res) => {
+            submitting.value = false
+            hideModal();
+            getDataList();
+          })
+          .catch((err) => {
+            submitting.value = false
+            console.log(err);
+            message.error(err.msg || '操作失败');
+          });
+      }
+    })
+    .catch((err) => {
+      console.log('不能为空');
+    });
 };
 
 const handleCancel = () => {
@@ -339,9 +341,7 @@ const hideModal = () => {
   text-align: right;
 }
 
-.table-operations > button {
+.table-operations>button {
   margin-right: 8px;
 }
-
-
 </style>

@@ -2,7 +2,7 @@
   <div id="userLayout">
     <div class="user-layout-header">
       <img class="logo" :src="logoImage" alt="">
-      <span>学生信息管理系统</span>
+      <span>网络流管理系统</span>
     </div>
     <div class="main-container">
       <div class="main">
@@ -99,9 +99,13 @@ const handleLogin = () => {
   userStore.adminLogin({
     username: data.loginForm.username,
     password: data.loginForm.password
-  }).then(res=>{
+  }).then(res => {
+    console.log(res);
+    
     loginSuccess()
-  }).catch(err=> {
+  }).catch(err => {
+    console.log(err);
+    
       message.warn(err.msg || '登录失败')
   })
 }

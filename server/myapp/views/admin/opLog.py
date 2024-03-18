@@ -4,8 +4,6 @@ from rest_framework.decorators import api_view
 from myapp.handler import APIResponse
 from myapp.models import OpLog
 from myapp.serializers import OpLogSerializer
-
-
 @api_view(['GET'])
 def list_api(request):
     if request.method == 'GET':

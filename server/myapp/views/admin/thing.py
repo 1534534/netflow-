@@ -1,13 +1,11 @@
 # Create your views here.
 from rest_framework.decorators import api_view, authentication_classes
-
 from myapp import utils
 from myapp.auth.authentication import AdminTokenAuthtication
 from myapp.handler import APIResponse
 from myapp.models import Classification, Thing, Tag
-from myapp.permission.permission import isDemoAdminUser
 from myapp.serializers import ThingSerializer, UpdateThingSerializer
-
+import pymysql
 
 @api_view(['GET'])
 def list_api(request):
@@ -22,18 +20,33 @@ def list_api(request):
             things = classification.classification_thing.all()
         elif tag:
             tag = Tag.objects.get(id=tag)
-            print(tag)
+
             things = tag.thing_set.all()
         else:
             things = Thing.objects.all().order_by('-create_time')
-
         serializer = ThingSerializer(things, many=True)
-        return APIResponse(code=0, msg='查询成功', data=serializer.data)
+        # print(serializer.data)
 
+        conn = pymysql.connect(
+            host="localhost",
+            port=3306,
+            user="root",
+            passwd="111111",
+            db="mysql",
+            charset="gbk",
 
+        )
+        db = conn.cursor()
+
+        # sql语句
+        sql = 'select * from b_netdata'
+        # 执行sql
+        a = db.execute(sql)
+        # 查找所有内容
+        data = db.fetchall()
+        return APIResponse(code=0, msg='查询成功', data= data)
 @api_view(['GET'])
 def detail(request):
-
     try:
         pk = request.GET.get('id', -1)
         thing = Thing.objects.get(pk=pk)
@@ -49,10 +62,6 @@ def detail(request):
 @api_view(['POST'])
 @authentication_classes([AdminTokenAuthtication])
 def create(request):
-
-    if isDemoAdminUser(request):
-        return APIResponse(code=1, msg='演示帐号无法操作')
-
     serializer = ThingSerializer(data=request.data)
     if serializer.is_valid():
         serializer.save()
@@ -67,9 +76,6 @@ def create(request):
 @api_view(['POST'])
 @authentication_classes([AdminTokenAuthtication])
 def update(request):
-
-    if isDemoAdminUser(request):
-        return APIResponse(code=1, msg='演示帐号无法操作')
 
     try:
         pk = request.GET.get('id', -1)
@@ -92,8 +98,6 @@ def update(request):
 @authentication_classes([AdminTokenAuthtication])
 def delete(request):
 
-    if isDemoAdminUser(request):
-        return APIResponse(code=1, msg='演示帐号无法操作')
 
     try:
         ids = request.GET.get('ids')

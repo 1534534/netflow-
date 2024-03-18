@@ -4,7 +4,6 @@ import time
 
 from rest_framework.views import exception_handler
 
-from myapp.serializers import ErrorLogSerializer
 
 def get_timestamp():
     return int(round(time.time() * 1000))
@@ -66,22 +65,4 @@ def get_monday():
     return monday.strftime('%Y-%m-%d %H:%M:%S.%f')[:10]
 
 
-def log_error(request, content):
-    """
-    记录错误日志
-    """
-    ip = get_ip(request)
-    method = request.method
-    url = request.path
 
-    data = {
-        'ip': ip,
-        'method': method,
-        'url': url,
-        'content': content
-    }
-
-    # 入库
-    serializer = ErrorLogSerializer(data=data)
-    if serializer.is_valid():
-        serializer.save()

@@ -47,7 +47,13 @@ export default ({ command }: ConfigEnv): UserConfig => {
       cors: true, // 类型： boolean | CorsOptions 为开发服务器配置 CORS。默认启用并允许任何源
       host: '0.0.0.0', // IP配置，支持从IP启动
       https: false, // 禁用https
-      // proxy,
-    },
+      // proxy, 
+      proxy: {
+        "/api": {
+          target: "http://172.0.0.1:8000" // 后端接口
+        }
+
+      }
+    }
   };
 };

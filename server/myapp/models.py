@@ -50,7 +50,6 @@ class Classification(models.Model):
     id = models.BigAutoField(primary_key=True)
     title = models.CharField(max_length=100, blank=True, null=True)
     create_time = models.DateTimeField(auto_now_add=True, null=True)
-
     def __str__(self):
         return self.title
 
@@ -83,16 +82,7 @@ class Thing(models.Model):
         db_table = "b_thing"
 
 
-class Comment(models.Model):
-    id = models.BigAutoField(primary_key=True)
-    content = models.CharField(max_length=200, blank=True, null=True)
-    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, related_name='user_comment')
-    thing = models.ForeignKey(Thing, on_delete=models.CASCADE, null=True, related_name='thing_comment')
-    comment_time = models.DateTimeField(auto_now_add=True, null=True)
-    like_count = models.IntegerField(default=0)
 
-    class Meta:
-        db_table = "b_comment"
 
 
 class Record(models.Model):
@@ -132,46 +122,14 @@ class OpLog(models.Model):
         db_table = "b_op_log"
 
 
-class ErrorLog(models.Model):
-    id = models.BigAutoField(primary_key=True)
-    ip = models.CharField(max_length=100, blank=True, null=True)
-    url = models.CharField(max_length=200, blank=True, null=True)
-    method = models.CharField(max_length=10, blank=True, null=True)
-    content = models.CharField(max_length=200, blank=True, null=True)
-    log_time = models.DateTimeField(auto_now_add=True, null=True)
-
-    class Meta:
-        db_table = "b_error_log"
 
 
-class Banner(models.Model):
-    id = models.BigAutoField(primary_key=True)
-    image = models.ImageField(upload_to='banner/', null=True)
-    thing = models.ForeignKey(Thing, on_delete=models.CASCADE, null=True, related_name='thing_banner')
-    create_time = models.DateTimeField(auto_now_add=True, null=True)
-
-    class Meta:
-        db_table = "b_banner"
 
 
-class Ad(models.Model):
-    id = models.BigAutoField(primary_key=True)
-    image = models.ImageField(upload_to='ad/', null=True)
-    link = models.CharField(max_length=500, blank=True, null=True)
-    create_time = models.DateTimeField(auto_now_add=True, null=True)
-
-    class Meta:
-        db_table = "b_ad"
 
 
-class Notice(models.Model):
-    id = models.BigAutoField(primary_key=True)
-    title = models.CharField(max_length=100, blank=True, null=True)
-    content = models.CharField(max_length=1000, blank=True, null=True)
-    create_time = models.DateTimeField(auto_now_add=True, null=True)
 
-    class Meta:
-        db_table = "b_notice"
+
 
 
 class Address(models.Model):

@@ -19,6 +19,8 @@ export const useUserStore = defineStore('user', {
 
     // 管理员登录
     async adminLogin(loginForm) {
+      console.log(loginForm);
+      
       const result = await adminLogin(loginForm);
       console.log('result==>', result)
 
