@@ -25,7 +25,6 @@ def list_api(request):
         else:
             things = Thing.objects.all().order_by('-create_time')
         serializer = ThingSerializer(things, many=True)
-        # print(serializer.data)
 
         conn = pymysql.connect(
             host="localhost",

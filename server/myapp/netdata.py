@@ -31,12 +31,12 @@ class NetworkTrafficMonitor:
         :param speed: 网速 Byte/s
         :return: 格式化网速
         """
-        if speed < 1024:
-            return f"{speed} B/s"
-        elif speed < 1048576:
-            return f"{speed / 1024:.2f} KB/s"
-        else:
-            return f"{speed / 1048576:.2f} MB/s"
+        # if speed < 1024:
+        #     return f"{speed} B/s"
+        # elif speed < 1048576:
+        return f"{speed / 1024:.2f} KB/s"
+        # else:
+        #     return f"{speed / 1048576:.2f} MB/s"
 
     def format_netdata(self, da):
         """
@@ -88,7 +88,7 @@ class NetworkTrafficMonitor:
                 for i in range(0,5):
                     item[i] =headers[i]+":"+ item[i]
             list = []
-            for item in data[3]:
+            for item in data[4]:
                 list.append(item.split(':')[-1])
             print(list)
             conn = pymysql.connect(
@@ -101,6 +101,15 @@ class NetworkTrafficMonitor:
 
             )
             cursor = conn.cursor()
+            sql = 'select * from b_netdata'
+            # 执行sql
+            a = cursor.execute(sql)
+            # 查找所有内容
+            data = cursor.fetchall()
+            if len(data) > 20:
+                res=data[0][4]
+                sql1 = "delete from b_netdata where download_all=%s"
+                cursor.execute(sql1, res)
             sql = "insert into b_netdata(port, upload_speed,download_speed,upload_all,download_all,time) values(%s, %s, %s, %s,%s,%s)"
             port = list[0]
             upload_speed = list[1]
@@ -109,7 +118,7 @@ class NetworkTrafficMonitor:
             download_all = list[4]
             time1 = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
             cursor.execute(sql, (port, upload_speed, download_speed, upload_all, download_all,time1))
-            time.sleep(5)  # 等待一秒
+            time.sleep(1)  # 等待一秒
             conn.commit()
             conn.close()
 
