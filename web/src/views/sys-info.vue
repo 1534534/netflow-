@@ -1,17 +1,7 @@
 <template>
   <div class="page-view">
     <a-spin v-bind:spinning="loading">
-      <a-descriptions
-          title="系统信息"
-          bordered
-          :column="{ lg: 3, md: 2, sm: 1 }"
-      >
-        <a-descriptions-item label="系统名称">
-          {{ data.sysName }}
-        </a-descriptions-item>
-        <a-descriptions-item label="版本信息">
-          {{ data.versionName }}
-        </a-descriptions-item>
+      <a-descriptions title="系统信息" bordered :column="{ lg: 3, md: 2, sm: 1 }">
         <a-descriptions-item label="操作系统">
           {{ data.osName }}
         </a-descriptions-item>
@@ -36,46 +26,38 @@
         <a-descriptions-item label="内存利用率">
           {{ data.percentMemory }}%
         </a-descriptions-item>
-        <a-descriptions-item label="系统语言">
-          {{ data.sysLan }}
+
+        <a-descriptions-item label="C盘内存使用率">
+          {{ data.use_percent_C }}%
         </a-descriptions-item>
-        <a-descriptions-item label="MySQL版本">
-          5.7.37
-        </a-descriptions-item>
-        <a-descriptions-item label="Nginx版本">
-          1.20.1
-        </a-descriptions-item>
-        <a-descriptions-item label="Vue版本">
-          3.2
-        </a-descriptions-item>
-        <a-descriptions-item label="系统时区">
-          {{ data.sysZone }}
+        <a-descriptions-item label="D盘内存使用率">
+          {{ data.use_percent_D }}%
         </a-descriptions-item>
       </a-descriptions>
     </a-spin>
   </div>
 </template>
-
 <script>
-import {sysInfoApi} from '/@/api/overview'
+import { sysInfoApi } from '/@/api/overview'
 
 export default {
-  data () {
+  data() {
     return {
       loading: false,
       data: {},
     }
   },
   methods: {
-    getSysInfo () {
+    getSysInfo() {
       this.loading = true
       sysInfoApi().then(res => {
         this.loading = false
         this.data = res.data
+        console.log(this.data);
       })
     }
   },
-  mounted () {
+  mounted() {
     this.getSysInfo()
   }
 }

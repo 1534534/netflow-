@@ -75,10 +75,12 @@ def sysInfo(request):
         pyComp = platform.python_compiler()
         osName = platform.system()
         memory = psutil.virtual_memory()
+        use_percent_C=psutil.disk_usage(psutil.disk_partitions()[0][0]).percent
+        use_percent_D=psutil.disk_usage(psutil.disk_partitions()[1][0]).percent
 
         data = {
-            'sysName': '后台管理平台',
-            'versionName': '1.1.0',
+            'use_percent_C':use_percent_C,
+            'use_percent_D': use_percent_D,
             'osName': osName,
             'pyVersion': pyVersion,
             'osBuild': osBuild,

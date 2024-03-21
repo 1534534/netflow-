@@ -90,7 +90,6 @@ class NetworkTrafficMonitor:
             list = []
             for item in data[4]:
                 list.append(item.split(':')[-1])
-            print(list)
             conn = pymysql.connect(
                 host="localhost",
                 port=3306,
@@ -110,14 +109,15 @@ class NetworkTrafficMonitor:
                 res=data[0][4]
                 sql1 = "delete from b_netdata where download_all=%s"
                 cursor.execute(sql1, res)
-            sql = "insert into b_netdata(port, upload_speed,download_speed,upload_all,download_all,time) values(%s, %s, %s, %s,%s,%s)"
+            sql = "insert into b_netdata(port, upload_speed,download_speed,upload_all,download_all,time,cpu_used) values(%s, %s, %s, %s,%s, %s,%s)"
             port = list[0]
             upload_speed = list[1]
             download_speed = list[2]
             upload_all = list[3]
             download_all = list[4]
+            cpu_used=psutil.cpu_percent(2)
             time1 = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-            cursor.execute(sql, (port, upload_speed, download_speed, upload_all, download_all,time1))
+            cursor.execute(sql, (port, upload_speed, download_speed, upload_all, download_all,time1,cpu_used))
             time.sleep(1)  # 等待一秒
             conn.commit()
             conn.close()

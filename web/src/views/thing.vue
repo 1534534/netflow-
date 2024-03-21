@@ -1,12 +1,35 @@
 <template>
   <div>
     <!--页面区域-->
-    <div class="content">
-      <div id="resource" style="width: 100vw;height: 50vh;  left: -7vw;"></div>
-      <a :model="allData"><span>累计上传：{{ allData.uploadAll }}</span>
-        <span>累计下载：{{ allData.downloadAll }}</span>
-      </a>
-    </div>
+    <a id="resource" style="width: 100vw;height: 40vh;left: -100px;"></a>
+    <tbody>
+      <a :key="allData">{{ allData.uploadAll }}</a>
+
+      <tr>
+        <td class="el-table__cell is-leaf">
+          <div class="cell">累计上传:</div>
+        </td>
+        <td class="el-table__cell is-leaf">
+          <div class="cell" v-if="allData.uploadAll">{{ allData.uploadAll }}%</div>
+        </td>
+      </tr>
+      <tr>
+        <td class="el-table__cell is-leaf">
+          <div class="cell">累计下载:</div>
+        </td>
+        <td class="el-table__cell is-leaf">
+          <div class="cell" v-if="allData.downloadAll">{{ allData.downloadAll }}%</div>
+        </td>
+      </tr>
+      <tr>
+        <td class="el-table__cell is-leaf">
+          <div class="cell">CPU利用率:</div>
+        </td>
+        <td class="el-table__cell is-leaf">
+          <div class="cell" v-if="allData.cpu_used">{{ allData.cpu_used }}%</div>
+        </td>
+      </tr>
+    </tbody>
   </div>
 </template>
 <script setup lang="ts">
@@ -82,6 +105,7 @@ let downloadSpeed = []
 let allData = reactive({
   uploadAll: '',
   downloadAll: '',
+  cpu_used: '',
 })
 let time = []
 const getDataList = () => {
@@ -101,7 +125,10 @@ const getDataList = () => {
         downloadSpeed.push(item[2].slice(0, -5))
         allData.uploadAll = item[3]
         allData.downloadAll = item[4]
+
         time.push(item[5].slice(-8,))
+        allData.cpu_used = item[6]
+
         if (uploadSpeed.length > 20) {
           uploadSpeed.shift()
         }
@@ -216,7 +243,6 @@ const drawDemo = () => {
   width: 100vw;
   height: 50vh;
   padding: 0px;
-  background-color: aquamarine;
 
 }
 </style>

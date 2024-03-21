@@ -10,9 +10,12 @@ import Antd from 'ant-design-vue';
 
 const app = createApp(App);
 
+import ElementPlus from 'element-plus';
+import 'element-plus/dist/index.css';
 
+app.use(ElementPlus);
 app.use(Antd);
 app.use(router);
 app.use(piniaStore);
-app.use(bootstrap)
+app.use(bootstrap);
 app.mount('#app');

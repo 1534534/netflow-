@@ -1,36 +1,50 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-import psutil
-import speedtest
-import time
+import os
+import socket
+import winreg
 
+# 检测主机名，并将主机名作文检测结果的文件名
+hostname = socket.gethostname()
+file = open(r'%s.txt' % hostname, 'w')  # 保存在当前目录，使用新建模式
 
-def monitor_network():
-    while True:
-        # 获取系统资源利用情况
-        disk_usage = psutil.disk_usage('/')
-        cpu_usage = psutil.cpu_percent(interval=1)
-        memory_usage = psutil.virtual_memory().percent
+# 定义检测位置
+sub_key = [
+    r'SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall',
+    r'SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall'
+]
 
-        # 测量网络速度
-        st = speedtest.Speedtest()
-        download_speed = st.download() / 1024 / 1024  # 转换为 Mbps
-        upload_speed = st.upload() / 1024 / 1024  # 转换为 Mbps
+software_name = []
+for i in sub_key:
+    key = winreg.OpenKey(
+        winreg.HKEY_LOCAL_MACHINE,
+        i,
+        0,
+        winreg.KEY_ALL_ACCESS
+    )
+    for j in range(0, winreg.QueryInfoKey(key)[0] - 1):
+        try:
+            key_name = winreg.EnumKey(key, j)
+            key_path = i + '\\' + key_name
+            each_key = winreg.OpenKey(
+                winreg.HKEY_LOCAL_MACHINE,
+                key_path,
+                0,
+                winreg.KEY_ALL_ACCESS
+            )
+            DisplayName, REG_SZ = winreg.QueryValueEx(each_key, 'DisplayName')
+            DisplayName = DisplayName.encode('utf-8')
+            software_name.append(DisplayName)
+        except WindowsError:
+            pass
 
-        # 打印监控信息
-        print(f'磁盘使用率：{disk_usage.percent}%')
-        print(f'磁盘总量：{disk_usage.total / 1024 ** 3:.2f}GB')
-        print(f'磁盘剩余量：{disk_usage.free / 1024 ** 3:.2f}GB')
-        print(f'磁盘已使用量：{disk_usage.used / 1024 ** 3:.2f}GB')
-        print(f"CPU 使用率: {cpu_usage}%")
-        print(f"内存使用率: {memory_usage}%")
-        print(f"下载速度: {download_speed:.2f} Mbps")
-        print(f"上传速度: {upload_speed:.2f} Mbps")
-        print("-" * 30)
+software_name = list(set(software_name))
+software_name = sorted(software_name)
+try:
+    for result in software_name:
+        app_name = str(result, encoding='utf-8')
+        file.write(app_name + '\n')
+        print(app_name)
+except Exception as e:
+    print(e)
+finally:
+    file.close()
 
-        # 每隔一段时间进行监控
-        time.sleep(300)  # 每5分钟监控一次
-
-
-if __name__ == "__main__":
-    monitor_network()
