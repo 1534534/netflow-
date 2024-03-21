@@ -1,16 +1,21 @@
 <template>
   <div>
     <!--页面区域-->
-    <a id="resource" style="width: 100vw;height: 40vh;left: -100px;"></a>
-    <tbody>
-      <a :key="allData">{{ allData.uploadAll }}</a>
+    <a id="resource" style="width: 90vw;height: 40vh;left: -5%;"></a>
+    <el-table :data="tableData" border style="width: 100%">
+
+      <el-table-column prop="name" label="属性" width="180" />
+
+      <el-table-column prop="data" label="值" width="180" />
+    </el-table>
+    <!-- <tbody>
 
       <tr>
         <td class="el-table__cell is-leaf">
           <div class="cell">累计上传:</div>
         </td>
         <td class="el-table__cell is-leaf">
-          <div class="cell" v-if="allData.uploadAll">{{ allData.uploadAll }}%</div>
+          <div class="cell" v-if="allData.uploadAll">{{ allData.uploadAll }}</div>
         </td>
       </tr>
       <tr>
@@ -18,7 +23,7 @@
           <div class="cell">累计下载:</div>
         </td>
         <td class="el-table__cell is-leaf">
-          <div class="cell" v-if="allData.downloadAll">{{ allData.downloadAll }}%</div>
+          <div class="cell" v-if="allData.downloadAll">{{ allData.downloadAll }}</div>
         </td>
       </tr>
       <tr>
@@ -29,12 +34,12 @@
           <div class="cell" v-if="allData.cpu_used">{{ allData.cpu_used }}%</div>
         </td>
       </tr>
-    </tbody>
+    </tbody> -->
   </div>
 </template>
 <script setup lang="ts">
 import { ref, reactive } from "vue"
-import { createApi, listApi, updateApi, deleteApi } from '/@/api/thing';
+import { listApi, updateApi, } from '/@/api/thing';
 // 引入 echarts 核心模块，核心模块提供了 echarts 使用必须要的接口。
 import * as echarts from "echarts/core";
 // 引入柱状图and折线图图表，就是图表后面的内容，以Chart结尾（下面放有图片）
@@ -62,6 +67,9 @@ import {
 import {
   CanvasRenderer
 } from "echarts/renderers";
+
+
+
 // 注册必须的组件
 echarts.use([
   TitleComponent,
@@ -87,6 +95,21 @@ const data = reactive({
   pageSize: 10,
   page: 1,
 });
+const tableData = reactive([
+  {
+    data: '',
+    name: '累计上传',
+
+  },
+  {
+    data: '',
+    name: '累计下载',
+  },
+  {
+    data: '',
+    name: 'CPU利用率',
+  },
+])
 onMounted(() => {
   getDataList();
 });
@@ -102,11 +125,7 @@ const meterTimeFn = () => {
 };
 let uploadSpeed = []
 let downloadSpeed = []
-let allData = reactive({
-  uploadAll: '',
-  downloadAll: '',
-  cpu_used: '',
-})
+
 let time = []
 const getDataList = () => {
   data.loading = true;
@@ -123,11 +142,10 @@ const getDataList = () => {
       data.dataList.forEach((item: any, index: any) => {
         uploadSpeed.push(item[1].slice(0, -4))
         downloadSpeed.push(item[2].slice(0, -5))
-        allData.uploadAll = item[3]
-        allData.downloadAll = item[4]
-
+        tableData[0].data = item[3]
+        tableData[1].data = item[4]
         time.push(item[5].slice(-8,))
-        allData.cpu_used = item[6]
+        tableData[2].data = item[6] + '%'
 
         if (uploadSpeed.length > 20) {
           uploadSpeed.shift()
@@ -210,12 +228,32 @@ const drawDemo = () => {
     }
     ],
     yAxis: [{
-      type: 'value'
+      type: 'value',
+      name: '上传速率'+"KB/s",
+      min: Math.round(Math.min.apply(null, uploadSpeed) * 0.8),
+      max: Math.round(Math.max.apply(null, uploadSpeed)*1.2),
+      axisLine: { // 是否显示坐标线
+        show: true,
+      },
+
+      splitNumber: 6, //设置坐标轴的分割段数
+    },
+    {
+      type: 'value',
+      name: '下载速率' + "KB/s",
+      min: Math.round(Math.min.apply(null, downloadSpeed) * 0.8) ,
+      max: Math.round(Math.max.apply(null, downloadSpeed) * 1.2),
+      axisLine: { // 是否显示坐标线
+        show: true,
+      },
+
+      splitNumber: 6, //设置坐标轴的分割段数
     }],
     series: [{
       name: '下载速率',
       type: 'line',
       xAxisIndex: 1,
+      yAxisIndex:1,
       smooth: true,
       emphasis: {
         focus: 'series'

@@ -15,7 +15,7 @@ const constantRouterMap = [
     redirect: '/admin/thing',
     component: () => import('/@/views/main.vue'),
     children: [
-      { path: 'overview', name: 'overview', component: () => import('/@/views/overview.vue') },
+      { path: 'sysInfo', name: 'sysInfo', component: () => import('/@/views/sysInfo.vue') },
       { path: 'thing', name: 'thing', component: () => import('/@/views/thing.vue') },
       { path: 'user', name: 'user', component: () => import('/@/views/user.vue') },
       { path: 'classification', name: 'classification', component: () => import('/@/views/classification.vue') },

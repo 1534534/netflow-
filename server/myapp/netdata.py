@@ -25,7 +25,7 @@ class NetworkTrafficMonitor:
         for interface, io in network_io.items():
             bytes_now[interface] = {'上传字节数': io.bytes_sent, '下载字节数': io.bytes_recv}
         return bytes_now
-    def format_speed(self, speed):
+    def net_speed(self, speed):
         """
         获取直观的网速格式
         :param speed: 网速 Byte/s
@@ -38,7 +38,7 @@ class NetworkTrafficMonitor:
         # else:
         #     return f"{speed / 1048576:.2f} MB/s"
 
-    def format_netdata(self, da):
+    def all_data(self, da):
         """
         获取直观的流量格式
         :param da: 字节数
@@ -67,7 +67,6 @@ class NetworkTrafficMonitor:
         for interface, bytes1 in raw_speed.items():
             raw[interface] = [bytes1['上传字节数'], bytes1['下载字节数']]
         while True:
-
             network_speeds = self.get_network_bytes()  # 获取一次当前收发字节数
 
             # 创建上一次字节数字典用于运算
@@ -77,13 +76,12 @@ class NetworkTrafficMonitor:
 
             data = []  # 用于显示数据的列表
             for interface, bytes1 in network_speeds.items():
-                data.append([interface, self.format_speed(bytes1['上传字节数'] - last[interface][0]),
-                             self.format_speed(bytes1['下载字节数'] - last[interface][1]),
-                             self.format_netdata(bytes1['上传字节数'] - raw[interface][0]),
-                             self.format_netdata(bytes1['下载字节数'] - raw[interface][1])])
+                data.append([interface, self.net_speed(bytes1['上传字节数'] - last[interface][0]),
+                             self.net_speed(bytes1['下载字节数'] - last[interface][1]),
+                             self.all_data(bytes1['上传字节数'] - raw[interface][0]),
+                             self.all_data(bytes1['下载字节数'] - raw[interface][1])])
             # 用tabulate库中tabulate函数生成表格对象
             headers = ["接口", "上传速率", "下载速率", "累积上传", "累积下载"]
-            table = tabulate(data, headers, tablefmt="grid")
             for item in data:
                 for i in range(0,5):
                     item[i] =headers[i]+":"+ item[i]
@@ -99,26 +97,31 @@ class NetworkTrafficMonitor:
                 charset="gbk",
 
             )
+
             cursor = conn.cursor()
             sql = 'select * from b_netdata'
             # 执行sql
-            a = cursor.execute(sql)
+            cursor.execute(sql)
             # 查找所有内容
             data = cursor.fetchall()
             if len(data) > 20:
-                res=data[0][4]
-                sql1 = "delete from b_netdata where download_all=%s"
-                cursor.execute(sql1, res)
+                for i in range(0, len(data) - 20):
+                    res=data[i][4]
+                    sql1 = "delete from b_netdata where download_all=%s"
+                    cursor.execute(sql1, res)
+
             sql = "insert into b_netdata(port, upload_speed,download_speed,upload_all,download_all,time,cpu_used) values(%s, %s, %s, %s,%s, %s,%s)"
+
             port = list[0]
             upload_speed = list[1]
             download_speed = list[2]
             upload_all = list[3]
             download_all = list[4]
-            cpu_used=psutil.cpu_percent(2)
+            print(list)
+            cpu_used=psutil.cpu_percent(1)
             time1 = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
             cursor.execute(sql, (port, upload_speed, download_speed, upload_all, download_all,time1,cpu_used))
-            time.sleep(1)  # 等待一秒
+            # time.sleep(1)  # 等待一秒
             conn.commit()
             conn.close()
 

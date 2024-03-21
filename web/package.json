@@ -3,7 +3,7 @@
   "version": "0.1.2",
   "author": "lengqin1024",
   "scripts": {
-    "dev": "vite --mode development",
+    "dev": "vite --mode development --open",
     "build": "vite build",
     "preview": "vite preview"
   },

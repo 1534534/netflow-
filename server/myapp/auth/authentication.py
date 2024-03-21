@@ -8,8 +8,6 @@ from myapp.models import User
 class AdminTokenAuthtication(BaseAuthentication):
     def authenticate(self, request):
         adminToken = request.META.get("HTTP_ADMINTOKEN")
-        # print("检查adminToken==>" + adminToken)
-
         users = User.objects.filter(admin_token=adminToken)
         """
         判定条件：

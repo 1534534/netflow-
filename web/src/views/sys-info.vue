@@ -1,7 +1,7 @@
 <template>
   <div class="page-view">
     <a-spin v-bind:spinning="loading">
-      <a-descriptions title="系统信息" bordered :column="{ lg: 3, md: 2, sm: 1 }">
+      <a-descriptions title="系统信息" bordered :column="{ lg: 2, md: 2, sm: 1 }">
         <a-descriptions-item label="操作系统">
           {{ data.osName }}
         </a-descriptions-item>
@@ -14,9 +14,6 @@
         <a-descriptions-item label="处理器">
           {{ data.processor }}
         </a-descriptions-item>
-        <a-descriptions-item label="CPU负载">
-          {{ data.cpuLoad }}%
-        </a-descriptions-item>
         <a-descriptions-item label="系统内存">
           {{ data.memory }}G
         </a-descriptions-item>
@@ -26,7 +23,9 @@
         <a-descriptions-item label="内存利用率">
           {{ data.percentMemory }}%
         </a-descriptions-item>
-
+        <a-descriptions-item label="本次开机时间">
+          {{ data.start_time }}
+        </a-descriptions-item>
         <a-descriptions-item label="C盘内存使用率">
           {{ data.use_percent_C }}%
         </a-descriptions-item>
@@ -38,7 +37,7 @@
   </div>
 </template>
 <script>
-import { sysInfoApi } from '/@/api/overview'
+import { sysInfoApi } from '/@/api/sysInfo'
 
 export default {
   data() {

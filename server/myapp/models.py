@@ -34,68 +34,17 @@ class User(models.Model):
 
     class Meta:
         db_table = "b_user"
-
-
-class Tag(models.Model):
-    id = models.BigAutoField(primary_key=True)
-    title = models.CharField(max_length=100, blank=True, null=True)
-    create_time = models.DateTimeField(auto_now_add=True, null=True)
-
-    class Meta:
-        db_table = "b_tag"
-
-
-class Classification(models.Model):
-    list_display = ("title", "id")
-    id = models.BigAutoField(primary_key=True)
-    title = models.CharField(max_length=100, blank=True, null=True)
-    create_time = models.DateTimeField(auto_now_add=True, null=True)
-    def __str__(self):
-        return self.title
-
-    class Meta:
-        db_table = "b_classification"
-
-
-class Thing(models.Model):
-    STATUS_CHOICES = (
-        ('0', '上架'),
-        ('1', '下架'),
-    )
-    id = models.BigAutoField(primary_key=True)
-    classification = models.ForeignKey(Classification, on_delete=models.CASCADE, blank=True, null=True,
-                                       related_name='classification_thing')
-    tag = models.ManyToManyField(Tag, blank=True)
-    xuehao = models.CharField(max_length=20, blank=True, null=True)
-    name = models.CharField(max_length=20, blank=True, null=True)
-    sex = models.CharField(max_length=20, blank=True, null=True)
-    birthday = models.CharField(max_length=20, blank=True, null=True)
-    jiguan = models.CharField(max_length=20, blank=True, null=True)
-    sfz = models.CharField(max_length=20, blank=True, null=True)
-    minzu = models.CharField(max_length=20, blank=True, null=True)
-    remark = models.CharField(max_length=30, blank=True, null=True)
-    cover = models.ImageField(upload_to='cover/', null=True)
-    status = models.CharField(max_length=1, choices=STATUS_CHOICES, default='0')
-    create_time = models.DateTimeField(auto_now_add=True, null=True)
-
-    class Meta:
-        db_table = "b_thing"
-
-
-
-
-
-class Record(models.Model):
-    id = models.BigAutoField(primary_key=True)
-    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, related_name='user_record')
-    thing = models.ForeignKey(Thing, on_delete=models.CASCADE, null=True, related_name='thing_record')
-    title = models.CharField(max_length=100, blank=True, null=True)
-    classification = models.ForeignKey(Classification, on_delete=models.CASCADE, null=True,
-                                       related_name='classification')
-    record_time = models.DateTimeField(auto_now_add=True, null=True)
-
-    class Meta:
-        db_table = "b_record"
+# class NetData(models.Model):
+#     port = models.CharField(max_length=200, blank=True, null=True)
+#     upload_speed = models.CharField(max_length=200, blank=True, null=True)
+#     download_speed = models.CharField(max_length=200, blank=True, null=True)
+#     upload_All = models.CharField(max_length=200, blank=True, null=True)
+#     download_All = models.CharField(max_length=200, blank=True, null=True)
+#     time = models.DateTimeField(auto_now_add=True, null=True)
+#     cpu_used=models.CharField(max_length=200, blank=True, null=True)
+#
+#     class Meta:
+#         db_table = "b_netdata"
 
 
 class LoginLog(models.Model):
@@ -104,7 +53,6 @@ class LoginLog(models.Model):
     ip = models.CharField(max_length=100, blank=True, null=True)
     ua = models.CharField(max_length=200, blank=True, null=True)
     log_time = models.DateTimeField(auto_now_add=True, null=True)
-
     class Meta:
         db_table = "b_login_log"
 
@@ -120,26 +68,3 @@ class OpLog(models.Model):
 
     class Meta:
         db_table = "b_op_log"
-
-
-
-
-
-
-
-
-
-
-
-
-class Address(models.Model):
-    id = models.BigAutoField(primary_key=True)
-    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, related_name='user_address')
-    name = models.CharField(max_length=100, blank=True, null=True)
-    mobile = models.CharField(max_length=30, blank=True, null=True)
-    desc = models.CharField(max_length=300, blank=True, null=True)
-    default = models.BooleanField(blank=True, null=True, default=False)  # 是否默认地址
-    create_time = models.DateTimeField(auto_now_add=True, null=True)
-
-    class Meta:
-        db_table = "b_address"

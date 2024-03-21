@@ -13,15 +13,11 @@
       <a-layout-sider v-model="collapsed" collapsible>
         <a-menu style="overflow:auto; overflow-x: hidden;" v-model:selectedKeys="selectedKeys" theme="dark"
           mode="inline" @click="handleClick">
-
           <a-menu-item key="thing">
             <database-outlined />
             <span>首页</span>
           </a-menu-item>
-          <a-menu-item key="classification">
-            <layout-outlined />
-            <span>班级管理</span>
-          </a-menu-item>
+  
 
           <a-menu-item key="user">
             <user-outlined />
@@ -59,22 +55,14 @@ import { useRouter, useRoute } from 'vue-router'
 import logo from '/@/assets/images/k-logo.png'
 
 import {
-  HomeOutlined,
   AppstoreOutlined,
   FolderOutlined,
   UserOutlined,
-  CommentOutlined,
   InfoCircleOutlined,
-  TagOutlined,
-  PieChartOutlined,
-  DollarOutlined,
-  LayoutOutlined,
   DatabaseOutlined
 } from '@ant-design/icons-vue';
-
 import { ref } from 'vue';
 import { useUserStore } from "/@/store";
-
 const userStore = useUserStore();
 
 const selectedKeys = ref<any[]>([])
@@ -89,12 +77,6 @@ const handleClick = ({ item, key, keyPath }) => {
     name: key,
   })
 }
-
-const handlePreview = () => {
-  let text = router.resolve({ name: 'index' })
-  window.open(text.href, '_blank')
-}
-
 onMounted(() => {
   // console.log('当前路由===>', route.name)
   selectedKeys.value = [route.name]

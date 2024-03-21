@@ -19,12 +19,7 @@
             showTotal: (total) => `共${total}条数据`,
           }">
         <template #bodyCell="{ text, record, index, column }">
-          <template v-if="column.key === 'role'">
-            <span>
-              <span v-if="text === '1'">管理员</span>
-              <span v-if="text === '2'">普通用户</span>
-            </span>
-          </template>
+         
           <template v-if="column.key === 'operation'">
             <span>
               <a @click="handleEdit(record)">编辑</a>
@@ -61,15 +56,7 @@
                   <a-input placeholder="请输入" v-model:value="modal.form.nickname" allowClear />
                 </a-form-item>
               </a-col>
-              <a-col span="24">
-                <a-form-item label="角色" name="role">
-                  <a-select placeholder="请选择" allowClear v-model:value="modal.form.role">
-                    <template v-for="item in modal.roleData">
-                      <a-select-option :value="item.id">{{ item.title }}</a-select-option>
-                    </template>
-                  </a-select>
-                </a-form-item>
-              </a-col>
+      
               <a-col span="24">
                 <a-form-item label="状态" name="status">
                   <a-select placeholder="请选择" allowClear v-model:value="modal.form.status">
@@ -121,12 +108,7 @@ const columns = reactive([
     key: 'nickname',
     align: 'center',
   },
-  {
-    title: '角色',
-    dataIndex: 'role',
-    key: 'role',
-    align: 'center',
-  },
+
   {
     title: '状态',
     dataIndex: 'status',
@@ -189,22 +171,11 @@ const modal = reactive({
   visile: false,
   editFlag: false,
   title: '',
-  roleData: [
-    {
-      id: '1',
-      title: '管理员',
-    },
-    {
-      id: '2',
-      title: '普通用户',
-    },
 
-  ],
   form: {
     id: undefined,
     username: undefined,
     password: undefined,
-    role: undefined,
     status: undefined,
     nickname: undefined,
     email: undefined,
@@ -213,7 +184,6 @@ const modal = reactive({
   rules: {
     username: [{ required: true, message: '请输入', trigger: 'change' }],
     password: [{ required: true, message: '请输入', trigger: 'change' }],
-    role: [{ required: true, message: '请选择', trigger: 'change' }],
     status: [{ required: true, message: '请选择', trigger: 'change' }],
   },
 });
@@ -326,9 +296,7 @@ const handleOk = () => {
       if (modal.form.nickname) {
         formData.append('nickname', modal.form.nickname);
       }
-      if (modal.form.role) {
-        formData.append('role', modal.form.role);
-      }
+
       if (modal.form.status) {
         formData.append('status', modal.form.status);
       }
